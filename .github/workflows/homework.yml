@@ -1,0 +1,28 @@
+name: Python
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"] # 로그를 찍을 파이썬 버전들
+
+    steps:
+      - uses: actions/checkout@v3 
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4 
+        with:
+          python-version: ${{ matrix.python-version }} # 위에 명시되어 있는 파이썬 버전들 세팅
+          
+      - name: Display Python version # 명령어 수행
+        run: python -c "import sys; print(sys.version)" > result${{ matrix.python-version }}.txt 
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v2 # 아티팩트 생성
+        with:
+          name: python-version-${{ matrix.python-version }}
+          path: result${{ matrix.python-version }}.txt # 아티팩트 저장
